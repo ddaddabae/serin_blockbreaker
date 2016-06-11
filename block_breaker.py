@@ -9,6 +9,7 @@ import math
 
 import constants
 import levels
+import block as b
 from player import Player
 from ball import Ball
 
@@ -34,6 +35,7 @@ def main():
   # Create all the levels
   level_list = []
   level_list.append(levels.Level_1(player))
+  level_list.append(levels.Level_2(player))
 
   # Set the current level
   current_level_no = 0
@@ -89,6 +91,11 @@ def main():
         distance = dist(ball.x - x, ball.y - y)
         if distance <= ball.size:
           ball.change_x *= -1
+          if type(block) is b.HardBlock and block.collision_count > 1:
+            block.collision_count -= 1
+            if block.collision_count == 1:
+              current_level.inner_list.remove(block.inner)
+            break
           current_level.block_list.remove(block)
           is_collide = True
           break
@@ -101,6 +108,11 @@ def main():
         distance = dist(ball.x - x, ball.y - y)
         if distance <= ball.size:
           ball.change_x *= -1
+          if type(block) is b.HardBlock and block.collision_count > 1:
+            block.collision_count -= 1
+            if block.collision_count == 1:
+              current_level.inner_list.remove(block.inner)
+            break
           current_level.block_list.remove(block)
           is_collide = True
           break
@@ -113,7 +125,12 @@ def main():
         distance = dist(ball.x - x, ball.y - y)
         if distance <= ball.size:
           ball.change_y *= -1
-          #ball.y = y + ball.size + ball.change_y
+          ball.y = y + ball.size
+          if type(block) is b.HardBlock and block.collision_count > 1:
+            block.collision_count -= 1
+            if block.collision_count == 1:
+              current_level.inner_list.remove(block.inner)
+            break
           current_level.block_list.remove(block)
           break
         x += 1
@@ -125,11 +142,25 @@ def main():
         distance = dist(ball.x - x, ball.y - y)
         if distance <= ball.size:
           ball.change_y *= -1
-          #ball.y = y - ball.size + ball.change_y
+          ball.y = y - ball.size
+          if type(block) is b.HardBlock and block.collision_count > 1:
+            block.collision_count -= 1
+            if block.collision_count == 1:
+              current_level.inner_list.remove(block.inner)
+            break
           current_level.block_list.remove(block)
           is_collide = True
           break
         x += 1
+
+    # Go to next level
+    if len(current_level.block_list) == 0:
+      if current_level_no == 1:
+        done = True
+      else:
+        ball.reset()
+        current_level_no += 1
+        current_level = level_list[current_level_no]
 
     # ALL CODE TO DRAW
     current_level.draw(screen)

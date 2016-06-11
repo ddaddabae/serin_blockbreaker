@@ -26,14 +26,10 @@ class Block(pygame.sprite.Sprite):
     self.change_x = 0
     self.change_y = 0
 
-  def update(self):
-    self.rect.x += self.change_x
-    self.rect.y += self.change_y
 
-    if self.rect.right >= self.right_boundary or self.rect.left <= self.left_boundary:
-      self.change_x *= -1
+class HardBlock(Block):
 
-    if self.rect.bottom >= self.bottom_boundary or self.rect.top <= self.top_boundary:
-      self.change_y *= -1
-
+  def __init__(self, color, width, height, max_collision):
+    Block.__init__(self, color, width, height)
+    self.collision_count = max_collision
 
