@@ -107,57 +107,64 @@ def main():
       # right side of block
       y = block.rect.y
       x = block.rect.x + block.rect.w
-      for i in range(block.rect.h):
-        distance = dist(ball.x - x, ball.y - y)
-        if distance <= ball.size:
+      if (ball.x >= x and ball.x <= x + ball.size and
+          ball.y >= y and ball.y <= y + block.rect.h):
           ball.change_x *= -1
-          if type(block) is b.HardBlock and block.collision_count > 1:
-            block.collision_count -= 1
-            if block.collision_count == 1:
-              current_level.inner_list.remove(block.inner)
-            break
+        if type(block) is b.HardBlock and block.collision_count > 1:
+          block.collision_count -= 1
+          if block.collision_count == 1:
+            current_level.inner_list.remove(block.inner)
+        else:
           current_level.block_list.remove(block)
-          is_collide = True
-          break
-        y += 1
 
       # left side of block
       y = block.rect.y
       x = block.rect.x
-      for i in range(block.rect.h):
-        distance = dist(ball.x - x, ball.y - y)
-        if distance <= ball.size:
-          ball.change_x *= -1
-          if type(block) is b.HardBlock and block.collision_count > 1:
-            block.collision_count -= 1
-            if block.collision_count == 1:
-              current_level.inner_list.remove(block.inner)
-            break
+      if (ball.x >= x-ball.size and ball.x <= x and
+          ball.y >= y and ball.y <= y + block.rect.h):
+        ball.change_x *= -1
+        if type(block) is b.HardBlock and block.collision_count > 1:
+          block.collision_count -= 1
+          if block.collision_count == 1:
+            current_level.inner_list.remove(block.inner)
+        else:
           current_level.block_list.remove(block)
-          is_collide = True
-          break
-        y += 1
+
 
       # bottom of block
       y = block.rect.y + block.rect.h
       x = block.rect.x
-      for i in range(block.rect.w):
-        distance = dist(ball.x - x, ball.y - y)
-        if distance <= ball.size:
-          ball.change_y *= -1
-          ball.y = y + ball.size
-          if type(block) is b.HardBlock and block.collision_count > 1:
-            block.collision_count -= 1
-            if block.collision_count == 1:
-              current_level.inner_list.remove(block.inner)
-            break
+      if (ball.x >= x and ball.x <= x + block.rect.w and 
+         ball.y >= y and ball.y <= y + ball.size) or
+         (dist(ball.x - x, ball.y - y) <= ball.size) or
+         (dist(ball.x - (x + block.rect.w), ball.y - y) <=  ball.size):
+        ball.change_y *= -1
+        ball.y = y + ball.size
+        if type(block) is b.HardBlock and block.collision_count > 1:
+          block.collision_count -= 1
+          if block.collision_count == 1:
+            current_level.inner_list.remove(block.inner)
+        else:
           current_level.block_list.remove(block)
-          break
-        x += 1
+
 
       # top of block
       y = block.rect.y
       x = block.rect.x
+      if (ball.x >= x and ball.x >= x + block.rect.w and
+          ball.y >= y - ball.size and ball.y <= y) or
+          (dist(ball.x - x, ball.y - y) <= ball.size) or
+          (dist(ball.x - (x + block.rect.w), ball.y - y):
+        ball.change_y *= -1
+        ball.y = y - ball.size
+        if type(block) is b.HardBlock and block.collision_count > 1:
+          block.collision_count -= 1
+          if block.collision_count == 1:
+            current_level.inner_list.remove(block.inner)
+        else:
+          current_level.block_list.remove(block)
+
+
       for i in range(block.rect.w):
         distance = dist(ball.x - x, ball.y - y)
         if distance <= ball.size:
@@ -169,7 +176,6 @@ def main():
               current_level.inner_list.remove(block.inner)
             break
           current_level.block_list.remove(block)
-          is_collide = True
           break
         x += 1
 
