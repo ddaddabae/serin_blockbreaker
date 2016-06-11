@@ -17,6 +17,17 @@ def dist(x, y):
   d = math.sqrt((x*x) + (y*y))
   return d
 
+
+class Game(object):
+  def __init__(self):
+    self.game_over = False
+
+def init_levellist(player):
+  level_list = []
+  level_list.append(levels.Level_1(player))
+  level_list.append(levels.Level_2(player))
+  return level_list
+
 def main():
   pygame.init()
 
@@ -33,9 +44,7 @@ def main():
   ball = Ball()
 
   # Create all the levels
-  level_list = []
-  level_list.append(levels.Level_1(player))
-  level_list.append(levels.Level_2(player))
+  level_list = init_levellist(player)
 
   # Set the current level
   current_level_no = 0
@@ -49,6 +58,7 @@ def main():
 
   # Loop until the user clicks the close button
   done = False
+  game_over = False
 
   # Used to manage how fast the screen updates
   clock = pygame.time.Clock()
@@ -71,6 +81,16 @@ def main():
           player.stop()
         if event.key == pygame.K_RIGHT:
           player.stop()
+
+      if event.type == pygame.MOUSEBUTTONDOWN:
+        if game_over:
+          ball.reset()
+          player.rect.x = (constants.SCREEN_WIDTH - player.rect.width) /2
+          level_list.clear()
+          level_list = init_levellist(player)
+          current_level = level_list[current_level_no]
+          player_level = current_level
+
 
     # Update the player
     active_sprite_list.update()
@@ -153,19 +173,35 @@ def main():
           break
         x += 1
 
-    # Go to next level
-    if len(current_level.block_list) == 0:
-      if current_level_no == 1:
-        done = True
-      else:
-        ball.reset()
-        current_level_no += 1
-        current_level = level_list[current_level_no]
 
-    # ALL CODE TO DRAW
-    current_level.draw(screen)
-    active_sprite_list.draw(screen)
-    ball.display(screen)
+    # Ball fell down
+    if ball.y - ball.size > constants.SCREEN_HEIGHT:
+      screen.fill(constants.BLACK)
+      font = pygame.font.Font(None, 50, bold=True)
+      text = font.render("Game Over, click to restart", True, constants.CORAL)
+      center_x = (constants.SCREEN_WIDTH // 2) - (text.get_width() // 2)
+      center_y = (constants.SCREEN_HEIGHT // 2) - (text.get_height() // 2)
+      screen.blit(text, [center_x, center_y])
+      game_over = True
+    else:
+      # Go to next level
+      if len(current_level.block_list) == 0:
+        if current_level_no == 1:
+          screen.fill(constants.BLACK)
+          font = pygame.font.Font(None, 50, bold=True)
+          text = font.render("Congratulations!! You are the champion :)", True, constants.CORAL)
+          center_x = (constants.SCREEN_WIDTH // 2) - (text.get_width() // 2)
+          center_y = (constants.SCREEN_HEIGHT // 2) - (text.get_height() // 2)
+          screen.blit(text, [center_x, center_y])
+        else:
+          ball.reset()
+          current_level_no += 1
+          current_level = level_list[current_level_no]
+
+      # ALL CODE TO DRAW
+      current_level.draw(screen)
+      active_sprite_list.draw(screen)
+      ball.display(screen)
 
     # Limit to 60 frames per second
     clock.tick(60)
