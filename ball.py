@@ -9,7 +9,7 @@ import constants
 class Ball(pygame.sprite.Sprite):
 
   change_x = 1
-  change_y = 5
+  change_y = 1
 
   def __init__(self):
     pygame.sprite.Sprite.__init__(self)
@@ -20,7 +20,7 @@ class Ball(pygame.sprite.Sprite):
     self.y = constants.SCREEN_HEIGHT - 200
     self.colour = constants.CORAL
     self.thickness = 0
-    self.speed = 3
+    self.speed = 5
     self.angle = math.pi/2
 
     self.right = self.x + self.size
@@ -36,7 +36,8 @@ class Ball(pygame.sprite.Sprite):
 
   def update(self):
     self.x += self.change_x
-    self.y += self.change_y
+    self.y += (self.change_y * self.speed)
+    self.speed -= 0.002
 
     self.right = self.x + self.size
     self.left = self.x - self.size
