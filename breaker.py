@@ -17,10 +17,14 @@ def dist(x, y):
   d = math.sqrt((x*x) + (y*y))
   return d
 
-
-class Game(object):
-  def __init__(self):
-    self.game_over = False
+def hardblock_collision(block, current_level):
+  if type(block) is b.HardBlock and block.collision_count > 1:
+    block.collision_count -= 1
+    if block.collision_count == 1:
+      current_level.inner_list.remove(block.inner)
+    return True
+  else:
+    return False
 
 def init_levellist(player):
   level_list = []
@@ -90,6 +94,7 @@ def main():
           level_list = init_levellist(player)
           current_level = level_list[current_level_no]
           player_level = current_level
+          game_over = False
 
 
     # Update the player
@@ -101,7 +106,7 @@ def main():
    
     if (ball.bottom >= player.rect.top) and (ball.x >= player.rect.x) and (ball.x <= player.rect.x+player.rect.w):
       ball.change_y *= -1
-      ball.speed += 0.2
+      ball.speed += 0.1
       ball.y = player.rect.top - ball.size + ball.change_y
 
     for block in current_level.block_list:
@@ -111,12 +116,8 @@ def main():
       if (ball.x >= x and ball.x <= x + ball.size and
           ball.y >= y and ball.y <= y + block.rect.h):
         ball.change_x *= -1
-        ball.speed += 0.2
-        if type(block) is b.HardBlock and block.collision_count > 1:
-          block.collision_count -= 1
-          if block.collision_count == 1:
-            current_level.inner_list.remove(block.inner)
-        else:
+        ball.speed += 0.1
+        if not hardblock_collision(block, current_level):
           current_level.block_list.remove(block)
 
       # left side of block
@@ -125,12 +126,8 @@ def main():
       if (ball.x >= x-ball.size and ball.x <= x and
           ball.y >= y and ball.y <= y + block.rect.h):
         ball.change_x *= -1
-        ball.speed += 0.2
-        if type(block) is b.HardBlock and block.collision_count > 1:
-          block.collision_count -= 1
-          if block.collision_count == 1:
-            current_level.inner_list.remove(block.inner)
-        else:
+        ball.speed += 0.1
+        if not hardblock_collision(block, current_level):
           current_level.block_list.remove(block)
 
       # bottom of block
@@ -141,13 +138,9 @@ def main():
          (dist(ball.x - x, ball.y - y) <= ball.size) or
          (dist(ball.x - (x + block.rect.w), ball.y - y) <=  ball.size)):
         ball.change_y *= -1
-        ball.speed += 0.2
+        ball.speed += 0.1
         ball.y = y + ball.size + ball.change_y
-        if type(block) is b.HardBlock and block.collision_count > 1:
-          block.collision_count -= 1
-          if block.collision_count == 1:
-            current_level.inner_list.remove(block.inner)
-        else:
+        if not hardblock_collision(block, current_level):
           current_level.block_list.remove(block)
 
       # top of block
@@ -158,13 +151,9 @@ def main():
           (dist(ball.x - x, ball.y - y) <= ball.size) or
           (dist(ball.x - (x + block.rect.w), ball.y - y) <= ball.size)):
         ball.change_y *= -1
-        ball.speed += 0.2
+        ball.speed += 0.1
         ball.y = y - ball.size + ball.change_y
-        if type(block) is b.HardBlock and block.collision_count > 1:
-          block.collision_count -= 1
-          if block.collision_count == 1:
-            current_level.inner_list.remove(block.inner)
-        else:
+        if not hardblock_collision(block, current_level):
           current_level.block_list.remove(block)
 
     # Ball fell down
