@@ -29,9 +29,10 @@ class Player(pygame.sprite.Sprite):
   def update(self):
     # Move left/right
     self.rect.x += self.change_x
-    
-    if (self.rect.x <= 0 and self.change_x < 0) or (self.rect.x >= constants.SCREEN_WIDTH - self.rect.width and self.change_x > 0):
-      self.change_x = 0
+    if self.rect.x <= 0:
+      self.rect.x = 0
+    elif self.rect.x >= constants.SCREEN_WIDTH - self.rect.width:
+      self.rect.x = constants.SCREEN_WIDTH - self.rect.width
 
   def move_left(self):
     # When the user hits the left arrow
